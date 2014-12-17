@@ -140,5 +140,11 @@ public class MockClientController implements IClientController
         System.out.println("Draw has been boardcasted");
         return true;
     }
+
+    @Override
+    public void Connect(String nickName) throws RemoteException
+    {
+        System.out.println("Connected!");
+    }
     
 }
