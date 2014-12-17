@@ -16,6 +16,8 @@ import java.util.Date;
  */
 public interface IClientController
 {
+    void Connect(String nickName) throws RemoteException;
+    
     void PostMessage(int messageId, String senderName, Date sentTime, String messageContent) throws RemoteException;
     void PostEmotion(int messageId, String senderName, Date sentTime, String emotionId) throws RemoteException;
     
