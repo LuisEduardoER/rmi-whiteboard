@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package privatewhiteboard;
+package privatewhiteboard.client;
 
 /**
  *
  * @author Otamegane
  */
-public class PrivateWhiteBoard
+public class PrivateWhiteBoardClient
 {
 
     /**
