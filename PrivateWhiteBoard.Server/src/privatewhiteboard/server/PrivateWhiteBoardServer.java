@@ -17,7 +17,6 @@ public class PrivateWhiteBoardServer
      */
     public static void main(String[] args)
     {
-        // TODO code application logic here
+        (new ServerForm()).setVisible(true);
     }
-    
 }
