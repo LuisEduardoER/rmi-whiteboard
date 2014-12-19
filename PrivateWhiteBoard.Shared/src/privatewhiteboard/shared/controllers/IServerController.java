@@ -16,8 +16,8 @@ import privatewhiteboard.shared.remotes.IRemoteClient;
  */
 public interface IServerController
 {
-    String Connect(IRemoteClient remoteClient, String nickName) throws RemoteException;
-    void Disconnect() throws RemoteException;
+    String Connect(IRemoteClient remoteClient, String nickName, String password) throws RemoteException;
+    void Disconnect(String idHash) throws RemoteException;
     
     boolean BoardcastMessage(String idHash, String messageContent) throws RemoteException;
     boolean BoardcastEmotion(String idHash, String emotionId) throws RemoteException;
