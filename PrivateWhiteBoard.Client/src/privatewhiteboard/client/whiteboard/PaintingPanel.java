@@ -10,6 +10,7 @@ import privatewhiteboard.client.whiteboard.PaintSurface;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
+import privatewhiteboard.shared.controllers.IClientController;
 
 /**
  *
@@ -20,11 +21,14 @@ public class PaintingPanel extends JPanel{
     public javax.swing.JList jlPaintOptions;
     PaintSurface paint = new PaintSurface();
     
+    IClientController _clientController;
+    
     public PaintingPanel(){
-        Initialize();
     }
     
-    private void Initialize(){
+    public void Initialize(IClientController clientController){
+        _clientController=clientController;
+        
         this.setLayout(new GridBagLayout());
         GridBagConstraints contraint = new GridBagConstraints();
         contraint.fill = GridBagConstraints.HORIZONTAL;
