@@ -17,7 +17,7 @@ public class PrivateWhiteBoardClient
      */
     public static void main(String[] args)
     {
-        // TODO code application logic here
+        (new ClientLoginForm()).setVisible(true);
     }
     
 }
