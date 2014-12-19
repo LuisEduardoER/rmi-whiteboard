@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package privatewhiteboard.client;
+package privatewhiteboard.client.whiteboard;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
