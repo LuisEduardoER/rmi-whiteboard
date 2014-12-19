@@ -15,11 +15,11 @@ import java.rmi.*;
 
 public interface IRemoteServer extends Remote
 {
-    String Connect(IRemoteClient remoteClient, String nickName) throws RemoteException;
-    void Disconnect() throws RemoteException;
+    String Connect(IRemoteClient remoteClient, String nickName, String password) throws RemoteException;
+    void Disconnect(String idHash) throws RemoteException;
     
-    boolean BoardcastMessage(String idHash, String messageContent) throws RemoteException;
-    boolean BoardcastEmotion(String idHash, String emotionId) throws RemoteException;
+    boolean BroadcastMessage(String idHash, String messageContent) throws RemoteException;
+    boolean BroadcastEmotion(String idHash, String emotionId) throws RemoteException;
     
     boolean BroadcastFreeDraw(String idHash, Brush brush, Point[] sequenceOfPoints) throws RemoteException;
     boolean BroadcastLineDraw(String idHash, Brush brush, Point startPoint, Point endPoint) throws RemoteException;

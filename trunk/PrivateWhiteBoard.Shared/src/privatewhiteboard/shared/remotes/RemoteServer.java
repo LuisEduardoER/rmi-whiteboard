@@ -25,25 +25,25 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer
     }
 
     @Override
-    public String Connect(IRemoteClient remoteClient, String nickName) throws RemoteException
+    public String Connect(IRemoteClient remoteClient, String nickName, String password) throws RemoteException
     {
-        return _controller.Connect(remoteClient, nickName);
+        return _controller.Connect(remoteClient, nickName, password);
     }
 
     @Override
-    public void Disconnect() throws RemoteException
+    public void Disconnect(String idHash) throws RemoteException
     {
-        _controller.Disconnect();
+        _controller.Disconnect(idHash);
     }
 
     @Override
-    public boolean BoardcastMessage(String idHash, String messageContent) throws RemoteException
+    public boolean BroadcastMessage(String idHash, String messageContent) throws RemoteException
     {
         return _controller.BoardcastMessage(idHash, messageContent);
     }
 
     @Override
-    public boolean BoardcastEmotion(String idHash, String emotionId) throws RemoteException
+    public boolean BroadcastEmotion(String idHash, String emotionId) throws RemoteException
     {
         return _controller.BoardcastEmotion(idHash, emotionId);
     }

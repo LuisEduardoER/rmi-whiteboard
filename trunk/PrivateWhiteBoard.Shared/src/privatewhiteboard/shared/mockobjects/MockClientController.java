@@ -18,6 +18,7 @@ import privatewhiteboard.shared.models.Point;
  *
  * @author Otamegane
  */
+/*
 public class MockClientController implements IClientController
 {
     IChatBoard _chatBoard;
@@ -148,3 +149,4 @@ public class MockClientController implements IClientController
     }
     
 }
+*/

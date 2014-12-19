@@ -9,6 +9,7 @@ import privatewhiteboard.shared.models.Brush;
 import privatewhiteboard.shared.models.Point;
 import java.rmi.RemoteException;
 import java.util.Date;
+import privatewhiteboard.shared.remotes.IRemoteClient;
 
 /**
  *
@@ -16,7 +17,7 @@ import java.util.Date;
  */
 public interface IClientController
 {
-    void Connect(String nickName) throws RemoteException;
+    boolean Connect(IRemoteClient remoteClient, String nickName, String password);
     
     void PostMessage(int messageId, String senderName, Date sentTime, String messageContent) throws RemoteException;
     void PostEmotion(int messageId, String senderName, Date sentTime, String emotionId) throws RemoteException;
