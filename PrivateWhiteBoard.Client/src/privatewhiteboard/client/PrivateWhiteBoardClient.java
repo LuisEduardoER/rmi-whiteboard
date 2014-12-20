@@ -17,7 +17,8 @@ public class PrivateWhiteBoardClient
      */
     public static void main(String[] args)
     {
-        (new ClientLoginForm()).setVisible(true);
+        //(new ClientLoginForm()).setVisible(true);
+        (new ClientForm()).setVisible(true);
     }
     
 }
