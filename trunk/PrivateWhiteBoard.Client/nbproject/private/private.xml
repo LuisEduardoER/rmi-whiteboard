@@ -4,9 +4,15 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/security.policy</file>
+            <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/NewJPanel.java</file>
+            <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/ClientForm.java</file>
+            <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/whiteboard/ShapeTypes.java</file>
+            <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/ChatBoardPanel.java</file>
             <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/PrivateWhiteBoardClient.java</file>
             <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/mockobjects/MockChatBoard.java</file>
+            <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/ClientWhiteBoardWindow.java</file>
             <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/ClientLoginForm.java</file>
+            <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/whiteboard/PaintingPanel.java</file>
             <file>file:/D:/Working%20place/Distributed%20computing/PrivateWhiteBoard.Client/src/privatewhiteboard/client/controllers/ClientController.java</file>
         </group>
     </open-files>

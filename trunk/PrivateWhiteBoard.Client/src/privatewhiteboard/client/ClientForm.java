@@ -5,6 +5,7 @@
  */
 package privatewhiteboard.client;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -27,7 +28,7 @@ import privatewhiteboard.shared.models.Point;
  */
 public class ClientForm extends JFrame implements IWhiteBoard, IChatBoard
 {
-    public PaintingPanel Paintting;
+    public PaintingPanel Painting;
     public JTabbedPane  ChatOptions;
     
     public ClientForm(){
@@ -36,21 +37,32 @@ public class ClientForm extends JFrame implements IWhiteBoard, IChatBoard
     }
     
     private void Initialize(){
-        this.setLayout(new GridBagLayout());
-        GridBagConstraints contraint = new GridBagConstraints();
-        contraint.fill = GridBagConstraints.HORIZONTAL;
+        this.setSize(new Dimension(400,400));
+        Painting = new PaintingPanel();
+        initChatOptions();
         
+        GridBagLayout layout=new GridBagLayout();
+        this.setLayout(layout);
+        GridBagConstraints constraint = new GridBagConstraints();
+        //constraint.fill = GridBagConstraints.BOTH;
         
+        constraint.gridx = 0;
+        constraint.gridy=0;
+        this.add(Painting, constraint);
+        
+        constraint.gridx = 1;
+        constraint.gridy = 0;
+        this.add(ChatOptions, constraint);
     }
     
     private void initChatOptions(){
-        ChatOptions = new JTabbedPane();
+        ChatOptions = new JTabbedPane(JTabbedPane.TOP);
         
-        ImageIcon sharingIcon = new ImageIcon("");
-        ImageIcon chatIcon = new ImageIcon("");
-        ImageIcon documentIcon = new ImageIcon("");
-        ImageIcon imageIcon = new ImageIcon("");
-        ImageIcon settingIcon = new ImageIcon("");
+        ImageIcon sharingIcon = new ImageIcon("D:\\Whiteboard data\\icon_sharing.jpg");
+        ImageIcon chatIcon = new ImageIcon("D:\\Whiteboard data\\icon_sharing.jpg");
+        ImageIcon documentIcon = new ImageIcon("D:\\Whiteboard data\\icon_sharing.jpg");
+        ImageIcon imageIcon = new ImageIcon("D:\\Whiteboard data\\icon_sharing.jpg");
+        ImageIcon settingIcon = new ImageIcon("D:\\Whiteboard data\\icon_sharing.jpg");
         
         JComponent sharingPanel = makePanel();
         JComponent chatPanel = makePanel();
@@ -60,10 +72,9 @@ public class ClientForm extends JFrame implements IWhiteBoard, IChatBoard
         
         ChatOptions.addTab("", sharingIcon, sharingPanel);
         ChatOptions.addTab("", chatIcon, chatPanel);
-        ChatOptions.addTab("", documentIcon, sharingPanel);
-        ChatOptions.addTab("", imageIcon, sharingPanel);
-        ChatOptions.addTab("", settingIcon, sharingPanel);
-        
+        ChatOptions.addTab("", documentIcon, documentPanel);
+        ChatOptions.addTab("", imageIcon, imagePanel);
+        ChatOptions.addTab("", settingIcon, settingPanel);
     }
     
     private JComponent makePanel()  {
