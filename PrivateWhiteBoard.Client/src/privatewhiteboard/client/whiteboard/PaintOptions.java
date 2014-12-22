@@ -10,10 +10,9 @@ package privatewhiteboard.client.whiteboard;
  *
  * @author Bui Thi Mai
  */
-public enum ShapeTypes {
-    ELLIPE,
-    RECTANGLE,
-    LINE,
-    NONE,
-    TEXT
+public enum PaintOptions {
+    POINTER,
+    DRAW,
+    ERASER,
+    HAND
 }

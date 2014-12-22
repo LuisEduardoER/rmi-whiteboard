@@ -33,21 +33,35 @@ public class PaintSurface extends JComponent {
 
     Point startDrag, endDrag;
 
-    public ShapeTypes shapeType;
+    PaintingPanel paintingPanel;
+    ShapeTypes shapeType;
+    PaintOptions option;
+    Color paintColor;
+    Color fillColor;
+    int strokeSize;
 
-    public PaintSurface() {
+    public PaintSurface(PaintingPanel paintingPanel) {
         shapeType = ShapeTypes.RECTANGLE;
+        option = PaintOptions.DRAW;
+        paintColor = Color.BLACK;
+        fillColor = Color.BLUE;
+        strokeSize = 2;
+        this.paintingPanel = paintingPanel;
 
+        this.setSize(1000, 1000);
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 startDrag = new Point(e.getX(), e.getY());
                 endDrag = startDrag;
+                if (shapeType == ShapeTypes.NONE) {
+                    Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
+                    shapes.add(r);
+                }
                 repaint();
             }
 
             public void mouseReleased(MouseEvent e) {
                 Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
-                //Shape r = makeLine(startDrag.x, startDrag.y, e.getX(), e.getY());
                 shapes.add(r);
                 startDrag = null;
                 endDrag = null;
@@ -58,9 +72,38 @@ public class PaintSurface extends JComponent {
         this.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 endDrag = new Point(e.getX(), e.getY());
-                repaint();
+                if (shapeType == ShapeTypes.NONE) {
+                    startDrag = endDrag;
+                    Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
+                    shapes.add(r);
+                }
+                switch (option) {
+                    case DRAW:
+                        repaint();
+                        break;
+                    case HAND:
+                        setLocation(endDrag);
+                        break;
+                    case ERASER:
+                        break;
+                    case POINTER:
+                        break;
+                }
+                //repaint();
             }
         });
+    }
+
+    public void setShapeType(ShapeTypes type) {
+        if (type != this.shapeType) {
+            this.shapeType = type;
+        }
+    }
+
+    public void setOption(PaintOptions option) {
+        if (option != this.option) {
+            this.option = option;
+        }
     }
 
     private void paintBackground(Graphics2D g2) {
@@ -78,27 +121,34 @@ public class PaintSurface extends JComponent {
     }
 
     @Override
+    public void setLocation(Point newPoint) {
+        this.setLocation(newPoint);
+    }
+
+    @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintBackground(g2);
-        Color[] colors = {Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.RED, Color.BLUE, Color.PINK};
-        int colorIndex = 0;
 
-        g2.setStroke(new BasicStroke(2));
+        g2.setStroke(new BasicStroke(strokeSize));
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f));
 
         for (Shape s : shapes) {
-            g2.setPaint(Color.BLACK);
+            g2.setPaint(paintColor);
             g2.draw(s);
-            g2.setPaint(colors[(colorIndex++) % 6]);
+            g2.setPaint(paintingPanel.getColorChooser().getCurrentColor());
             g2.fill(s);
         }
+//        g2.setPaint(paintColor);
+//        g2.draw(shapes.get(shapes.size() - 1));
+//        g2.setPaint(paintingPanel.getColorChooser().getCurrentColor());
+//        g2.fill(shapes.get(shapes.size() - 1));
 
         if (startDrag != null && endDrag != null) {
             g2.setPaint(Color.LIGHT_GRAY);
             Shape r = makeShape(startDrag.x, startDrag.y, endDrag.x, endDrag.y);
-            //Shape r = makeLine(startDrag.x, startDrag.y, endDrag.x, endDrag.y);
+            g2.setStroke(new BasicStroke(2));
             g2.draw(r);
         }
     }
@@ -112,10 +162,12 @@ public class PaintSurface extends JComponent {
             case RECTANGLE:
                 return makeRectangle(x1, y1, x2, y2);
             case NONE:
-                return makeLine(x1, y1, x2, y2);
+                return makeFreeLine(x1, y1, x2, y2);
+            case TEXT:
+                return makeTextArea(x1, y1, x2, y2);
             default:
                 return makeRectangle(x1, y1, x2, y2);
-                
+
         }
     }
 
@@ -135,8 +187,18 @@ public class PaintSurface extends JComponent {
         return new Line2D.Float(x1, y1, x2, y2);
     }
 
+    private Rectangle2D.Float makeTextArea(int x1, int y1, int x2, int y2) {
+        return new Rectangle2D.Float(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+        
+    }
+
+    private Line2D.Float makeFreeLine(int x1, int y1, int x2, int y2) {
+        return new Line2D.Float(x1, y1, x2, y2);
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
 }
+
