@@ -9,9 +9,11 @@ package privatewhiteboard.client.whiteboard;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.MouseAdapter;
@@ -20,14 +22,20 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.abs;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JComponent;
+import javax.swing.Scrollable;
+import privatewhiteboard.shared.interfaces.IWhiteBoard;
+import privatewhiteboard.shared.models.Brush;
 
 /**
  *
  * @author Bui Thi Mai
  */
-public class PaintSurface extends JComponent {
+public class PaintSurface extends JComponent implements IWhiteBoard, Scrollable {
 
     ArrayList<Shape> shapes = new ArrayList<Shape>();
 
@@ -48,12 +56,12 @@ public class PaintSurface extends JComponent {
         strokeSize = 2;
         this.paintingPanel = paintingPanel;
 
-        this.setSize(1000, 1000);
+        this.setPreferredSize(new Dimension(3000, 3000));
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 startDrag = new Point(e.getX(), e.getY());
                 endDrag = startDrag;
-                if (shapeType == ShapeTypes.NONE) {
+                if (shapeType == ShapeTypes.NONE && option == PaintOptions.DRAW) {
                     Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
                     shapes.add(r);
                 }
@@ -61,8 +69,15 @@ public class PaintSurface extends JComponent {
             }
 
             public void mouseReleased(MouseEvent e) {
-                Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
-                shapes.add(r);
+                switch (option) {
+                    case DRAW:
+                        Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
+                        shapes.add(r);
+                        break;
+                    default:
+                        break;
+                }
+
                 startDrag = null;
                 endDrag = null;
                 repaint();
@@ -72,17 +87,17 @@ public class PaintSurface extends JComponent {
         this.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 endDrag = new Point(e.getX(), e.getY());
-                if (shapeType == ShapeTypes.NONE) {
-                    startDrag = endDrag;
-                    Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
-                    shapes.add(r);
-                }
+
                 switch (option) {
                     case DRAW:
+                        if (shapeType == ShapeTypes.NONE) {
+                            startDrag = endDrag;
+                            Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
+                            shapes.add(r);
+                        }
                         repaint();
                         break;
                     case HAND:
-                        setLocation(endDrag);
                         break;
                     case ERASER:
                         break;
@@ -122,7 +137,9 @@ public class PaintSurface extends JComponent {
 
     @Override
     public void setLocation(Point newPoint) {
-        this.setLocation(newPoint);
+        int x = this.getX() + abs(startDrag.x - newPoint.x);
+        int y = this.getY() + abs(startDrag.y - newPoint.y);
+        //this.setBounds(, WIDTH, this.WIDTH, this.HEIGHT);
     }
 
     @Override
@@ -140,11 +157,6 @@ public class PaintSurface extends JComponent {
             g2.setPaint(paintingPanel.getColorChooser().getCurrentColor());
             g2.fill(s);
         }
-//        g2.setPaint(paintColor);
-//        g2.draw(shapes.get(shapes.size() - 1));
-//        g2.setPaint(paintingPanel.getColorChooser().getCurrentColor());
-//        g2.fill(shapes.get(shapes.size() - 1));
-
         if (startDrag != null && endDrag != null) {
             g2.setPaint(Color.LIGHT_GRAY);
             Shape r = makeShape(startDrag.x, startDrag.y, endDrag.x, endDrag.y);
@@ -189,7 +201,7 @@ public class PaintSurface extends JComponent {
 
     private Rectangle2D.Float makeTextArea(int x1, int y1, int x2, int y2) {
         return new Rectangle2D.Float(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
-        
+
     }
 
     private Line2D.Float makeFreeLine(int x1, int y1, int x2, int y2) {
@@ -199,6 +211,72 @@ public class PaintSurface extends JComponent {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return new Dimension(640, 480);
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return 0;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return 0;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
+
+    @Override
+    public void PostFreeDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point[] sequenceOfPoints) throws RemoteException {
+        privatewhiteboard.shared.models.Point point;
+        for(int i = 0; i < sequenceOfPoints.length - 1; i++){
+            point = sequenceOfPoints[i];
+            shapes.add(makeFreeLine((int)point.GetX(), (int)point.GetY(), (int)point.GetX(), (int)point.GetY()));
+            repaint();
+        }
+    }
+
+    @Override
+    public void PostLineDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point startPoint, privatewhiteboard.shared.models.Point endPoint) throws RemoteException {
+        Line2D.Float line = makeLine((int)startPoint.GetX(), (int)startPoint.GetY(), (int)endPoint.GetX(), (int)endPoint.GetY());
+        shapes.add(line);
+        repaint();
+    }
+
+    @Override
+    public void PostRectangleDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point center, double width, double height, boolean isFilled) throws RemoteException {
+        Rectangle2D.Float rectangle = makeRectangle((int)(center.GetX() - width/2), (int)(center.GetY() - height/2), (int)(center.GetX() + width/2), (int)(center.GetY() + height/2));
+        shapes.add(rectangle);
+        repaint();
+    }
+
+    @Override
+    public void PostEllipseDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point center, double r, boolean isFilled) throws RemoteException {
+        Ellipse2D.Float ellipse = makeEllipse((int)(center.GetX() - r), (int)(center.GetY() - r), (int)(center.GetX() + r), (int)(center.GetY() + r));
+        shapes.add(ellipse);
+        repaint();
+    }
+
+    @Override
+    public void PostPolygonDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point[] sequenceOfPoints, boolean isFilled) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void PostTextDraw(int drawId, String senderName, Date sentTime, Brush brush, String text, double fontSize, double fontName) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
 
