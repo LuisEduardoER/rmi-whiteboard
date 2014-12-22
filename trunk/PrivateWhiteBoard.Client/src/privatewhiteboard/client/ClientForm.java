@@ -5,6 +5,7 @@
  */
 package privatewhiteboard.client;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -42,21 +43,16 @@ public class ClientForm extends JFrame implements IWhiteBoard, IChatBoard
         initChatOptions();
         
         GridBagLayout layout=new GridBagLayout();
-        this.setLayout(layout);
-        GridBagConstraints constraint = new GridBagConstraints();
-        //constraint.fill = GridBagConstraints.BOTH;
+        this.setLayout(new BorderLayout());
         
-        constraint.gridx = 0;
-        constraint.gridy=0;
-        this.add(Painting, constraint);
+        this.add(Painting, BorderLayout.CENTER);
         
-        constraint.gridx = 1;
-        constraint.gridy = 0;
-        this.add(ChatOptions, constraint);
+        this.add(ChatOptions, BorderLayout.LINE_END);
     }
     
     private void initChatOptions(){
         ChatOptions = new JTabbedPane(JTabbedPane.TOP);
+        ChatOptions.setPreferredSize(new Dimension(300,600));
         
         ImageIcon sharingIcon = new ImageIcon("D:\\Whiteboard data\\icon_sharing.jpg");
         ImageIcon chatIcon = new ImageIcon("D:\\Whiteboard data\\icon_sharing.jpg");
