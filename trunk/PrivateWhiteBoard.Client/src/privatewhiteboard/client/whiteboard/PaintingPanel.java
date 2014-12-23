@@ -100,12 +100,12 @@ public class PaintingPanel extends JPanel implements IWhiteBoard{
         this.add(colorChooser, contraint);
         
         contraint.gridx = 1;
-        contraint.gridy = 3;
+        contraint.gridy = 2;
         this.add(strokeSlider, contraint);
 
         //add paint to panel
         contraint.gridx = 0;
-        contraint.gridy = 4;
+        contraint.gridy = 3;
         contraint.gridwidth = 2;
 
         this.add(paintScrollPanel, contraint);
