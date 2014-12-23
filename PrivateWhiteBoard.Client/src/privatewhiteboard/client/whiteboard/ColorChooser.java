@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -99,7 +100,8 @@ public class ColorChooser extends JPanel implements ActionListener, ChangeListen
             crayon.addActionListener(this);
 
             //Set the image or, if that's invalid, equivalent text.
-            ImageIcon icon = createImageIcon("F:\\PROJECTS\\WHITE BOARD\\PrivateWhiteBoard\\PrivateWhiteBoard\\src\\Icons\\" + name + ".png");
+            URL url = ClassLoader.getSystemResource("Icons/" + name + ".png");
+            ImageIcon icon = createImageIcon(url);
             if (icon != null) {
                 crayon.setIcon(icon);
                 crayon.setToolTipText("The " + name + " crayon");
@@ -113,13 +115,12 @@ public class ColorChooser extends JPanel implements ActionListener, ChangeListen
             return crayon;
         }
 
-        protected ImageIcon createImageIcon(String path) {
-            java.net.URL imgURL = CrayonPanel.class.getResource(path);
-            ImageIcon icon = new ImageIcon(path);
+        protected ImageIcon createImageIcon(URL url) {
+            ImageIcon icon = new ImageIcon(url);
             if (icon != null) {
-                return new ImageIcon(path);//(imgURL);
+                return new ImageIcon(url);//(imgURL);
             } else {
-                System.err.println("Couldn't find file: " + path);
+                System.err.println("Couldn't find file: " + url);
                 return null;
             }
         }
