@@ -37,7 +37,7 @@ import privatewhiteboard.shared.models.Brush;
  */
 public class PaintSurface extends JComponent implements IWhiteBoard, Scrollable {
 
-    ArrayList<Shape> shapes = new ArrayList<Shape>();
+    ArrayList<MyShape> shapes = new ArrayList<MyShape>();
 
     Point startDrag, endDrag;
 
@@ -61,17 +61,27 @@ public class PaintSurface extends JComponent implements IWhiteBoard, Scrollable 
             public void mousePressed(MouseEvent e) {
                 startDrag = new Point(e.getX(), e.getY());
                 endDrag = startDrag;
-                if (shapeType == ShapeTypes.NONE && option == PaintOptions.DRAW) {
-                    Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
-                    shapes.add(r);
+                switch (option) {
+                    case DRAW:
+                        if (shapeType == ShapeTypes.NONE) {
+                            MyShape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
+                            shapes.add(r);
+                        }
+                        break;
+                    case ERASER:
+                        
+                        break;
+                    default:
+                        break;
                 }
+
                 repaint();
             }
 
             public void mouseReleased(MouseEvent e) {
                 switch (option) {
                     case DRAW:
-                        Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
+                        MyShape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
                         shapes.add(r);
                         break;
                     default:
@@ -92,7 +102,7 @@ public class PaintSurface extends JComponent implements IWhiteBoard, Scrollable 
                     case DRAW:
                         if (shapeType == ShapeTypes.NONE) {
                             startDrag = endDrag;
-                            Shape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
+                            MyShape r = makeShape(startDrag.x, startDrag.y, e.getX(), e.getY());
                             shapes.add(r);
                         }
                         repaint();
@@ -148,40 +158,49 @@ public class PaintSurface extends JComponent implements IWhiteBoard, Scrollable 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintBackground(g2);
 
-        g2.setStroke(new BasicStroke(strokeSize));
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.50f));
-
-        for (Shape s : shapes) {
+        switch(option){
+            case DRAW:
+                break;
+            case ERASER:
+                shapes.removeAll(shapes);
+                break;
+            case POINTER:
+                break;
+        }
+        for (MyShape s : shapes) {
+            g2.setStroke(new BasicStroke(s.stroke));
             g2.setPaint(paintColor);
-            g2.draw(s);
-            g2.setPaint(paintingPanel.getColorChooser().getCurrentColor());
-            g2.fill(s);
+            g2.draw(s.shape);
+            g2.setPaint(s.color);
+            g2.fill(s.shape);
         }
         if (startDrag != null && endDrag != null) {
             g2.setPaint(Color.LIGHT_GRAY);
-            Shape r = makeShape(startDrag.x, startDrag.y, endDrag.x, endDrag.y);
+            Shape r = makeShape(startDrag.x, startDrag.y, endDrag.x, endDrag.y).shape;
             g2.setStroke(new BasicStroke(2));
             g2.draw(r);
         }
     }
 
-    private Shape makeShape(int x1, int y1, int x2, int y2) {
+    private MyShape makeShape(int x1, int y1, int x2, int y2) {
         switch (shapeType) {
             case ELLIPE:
-                return makeEllipse(x1, y1, x2, y2);
+                return new MyShape(makeEllipse(x1, y1, x2, y2), paintingPanel.getColorChooser().getCurrentColor(), strokeSize);
             case LINE:
-                return makeLine(x1, y1, x2, y2);
+                return new MyShape(makeLine(x1, y1, x2, y2), paintingPanel.getColorChooser().getCurrentColor(), strokeSize);
             case RECTANGLE:
-                return makeRectangle(x1, y1, x2, y2);
+                return new MyShape(makeRectangle(x1, y1, x2, y2), paintingPanel.getColorChooser().getCurrentColor(), strokeSize);
             case NONE:
-                return makeFreeLine(x1, y1, x2, y2);
+                return new MyShape(makeFreeLine(x1, y1, x2, y2), paintingPanel.getColorChooser().getCurrentColor(), strokeSize);
             case TEXT:
-                return makeTextArea(x1, y1, x2, y2);
+                return new MyShape(makeTextArea(x1, y1, x2, y2), paintingPanel.getColorChooser().getCurrentColor(), strokeSize);
             default:
-                return makeRectangle(x1, y1, x2, y2);
+                return new MyShape(makeRectangle(x1, y1, x2, y2), paintingPanel.getColorChooser().getCurrentColor(), strokeSize);
 
         }
     }
+
 
     private Rectangle2D.Float makeRectangle(int x1, int y1, int x2, int y2) {
         return new Rectangle2D.Float(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
@@ -243,7 +262,7 @@ public class PaintSurface extends JComponent implements IWhiteBoard, Scrollable 
         privatewhiteboard.shared.models.Point point;
         for(int i = 0; i < sequenceOfPoints.length - 1; i++){
             point = sequenceOfPoints[i];
-            shapes.add(makeFreeLine((int)point.GetX(), (int)point.GetY(), (int)point.GetX(), (int)point.GetY()));
+            shapes.add(new MyShape(makeFreeLine((int)point.GetX(), (int)point.GetY(), (int)point.GetX(), (int)point.GetY()), paintingPanel.getColorChooser().getCurrentColor(), strokeSize));
             repaint();
         }
     }
@@ -251,21 +270,21 @@ public class PaintSurface extends JComponent implements IWhiteBoard, Scrollable 
     @Override
     public void PostLineDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point startPoint, privatewhiteboard.shared.models.Point endPoint) throws RemoteException {
         Line2D.Float line = makeLine((int)startPoint.GetX(), (int)startPoint.GetY(), (int)endPoint.GetX(), (int)endPoint.GetY());
-        shapes.add(line);
+        shapes.add(new MyShape(line, paintingPanel.getColorChooser().getCurrentColor(), strokeSize));
         repaint();
     }
 
     @Override
     public void PostRectangleDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point center, double width, double height, boolean isFilled) throws RemoteException {
         Rectangle2D.Float rectangle = makeRectangle((int)(center.GetX() - width/2), (int)(center.GetY() - height/2), (int)(center.GetX() + width/2), (int)(center.GetY() + height/2));
-        shapes.add(rectangle);
+        shapes.add(new MyShape(rectangle, paintingPanel.getColorChooser().getCurrentColor(), strokeSize));
         repaint();
     }
 
     @Override
     public void PostEllipseDraw(int drawId, String senderName, Date sentTime, Brush brush, privatewhiteboard.shared.models.Point center, double r, boolean isFilled) throws RemoteException {
         Ellipse2D.Float ellipse = makeEllipse((int)(center.GetX() - r), (int)(center.GetY() - r), (int)(center.GetX() + r), (int)(center.GetY() + r));
-        shapes.add(ellipse);
+        shapes.add(new MyShape(ellipse, paintingPanel.getColorChooser().getCurrentColor(), strokeSize));
         repaint();
     }
 
